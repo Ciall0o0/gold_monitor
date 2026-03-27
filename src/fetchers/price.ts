@@ -18,7 +18,7 @@ export interface PriceData {
 
 // 数据源列表
 const PRICE_SOURCES = [
-  { name: '浙商银行积存金 (Jina)', url: 'https://r.jina.ai/https://jdjr.jd.com/?oldVersion=true', type: 'jd_jina', code: 'ZSBANK' },
+  { name: '浙商银行积存金 (Jina)', url: 'https://r.jina.ai/https://jdjr.jd.com/?oldVersion=true&tab=gold', type: 'jd_jina', code: 'ZSBANK' },
 ];
 
 // Jina API Key
@@ -70,92 +70,34 @@ export async function fetchGoldPrice(): Promise<PriceData | null> {
 function parseJinaResponse(responseText: string, source: typeof PRICE_SOURCES[0]): PriceData | null {
   try {
     // Jina 返回纯文本，格式示例:
-    // 黄金 9999
+    // 浙商实时金价
     // 987.60
     // -3.76-0.37%
 
-    // 尝试匹配各种价格格式
-    const pricePatterns = [
-      // 格式：买入:XXX.XX 卖出:XXX.XX
-      /买入 [：:]\s*(\d+\.?\d*)[\s\S]*?卖出 [：:]\s*(\d+\.?\d*)/i,
-      // 格式：买价:XXX.XX 卖价:XXX.XX
-      /买 [价金] [：:]\s*(\d+\.?\d*)[\s\S]*?卖 [价金] [：:]\s*(\d+\.?\d*)/i,
-      // 格式：黄金 9999 后跟价格
-      /黄金\s*9999\s*\n\s*(\d+\.?\d*)/i,
-      // 格式：黄金 T+D 后跟价格
-      /黄金\s*T\+D\s*\n\s*(\d+\.?\d*)/i,
-      // 格式：当前价:XXX.XX
-      /(?:当前 [价金]|最新 [价金])[：:]\s*(\d+\.?\d*)/i,
-      // 格式：XXX.XX 元
-      /(\d+\.?\d+)\s*元/i,
-    ];
+    // 只保留浙商实时金价 的匹配模式
+    // 格式：浙商实时金价 后跟价格
+    const gold9999Pattern = /浙商实时金价\s*\n\s*(\d+\.?\d*)/i;
 
     let buyPrice: number | null = null;
     let sellPrice: number | null = null;
     let currentPrice: number | null = null;
     let changePercent: number | null = null;
 
-    // 尝试第一个模式（买入/卖出）
-    let match = responseText.match(pricePatterns[0]);
+    // 仅尝试浙商实时金价 格式匹配
+    const match = responseText.match(gold9999Pattern);
     if (match) {
-      buyPrice = parseFloat(match[1]);
-      sellPrice = parseFloat(match[2]);
-      currentPrice = (buyPrice + sellPrice) / 2;
-      console.log(`[Price] Jina matched buy/sell: ${buyPrice}/${sellPrice}`);
-    } else {
-      // 尝试第二个模式（买价/卖价）
-      match = responseText.match(pricePatterns[1]);
-      if (match) {
-        buyPrice = parseFloat(match[1]);
-        sellPrice = parseFloat(match[2]);
-        currentPrice = (buyPrice + sellPrice) / 2;
-        console.log(`[Price] Jina matched buy/sell price: ${buyPrice}/${sellPrice}`);
+      currentPrice = parseFloat(match[1]);
+      console.log(`[Price] Jina matched gold price: ${currentPrice}`);
+
+      // 尝试提取涨跌幅 (保持原有的逻辑)
+      const pctMatch = responseText.match(/浙商实时金价\s*\n\s*\d+\.?\d*\s*\n\s*-?\d+\.?\d*([-+]\d+\.?\d*)%/);
+      if (pctMatch) {
+        changePercent = parseFloat(pctMatch[1]);
+        console.log(`[Price] Jina matched changePercent: ${changePercent}`);
       }
     }
 
-    // 尝试黄金 9999 格式
-    if (!currentPrice) {
-      match = responseText.match(pricePatterns[2]);
-      if (match) {
-        currentPrice = parseFloat(match[1]);
-        console.log(`[Price] Jina matched gold 9999 price: ${currentPrice}`);
-
-        // 尝试提取涨跌幅
-        const pctMatch = responseText.match(/黄金\s*9999\s*\n\s*\d+\.?\d*\s*\n\s*-?\d+\.?\d*([-+]\d+\.?\d*)%/);
-        if (pctMatch) {
-          changePercent = parseFloat(pctMatch[1]);
-          console.log(`[Price] Jina matched changePercent: ${changePercent}`);
-        }
-      }
-    }
-
-    // 尝试黄金 T+D 格式
-    if (!currentPrice) {
-      match = responseText.match(pricePatterns[3]);
-      if (match) {
-        currentPrice = parseFloat(match[1]);
-        console.log(`[Price] Jina matched gold TD price: ${currentPrice}`);
-      }
-    }
-
-    // 尝试当前价
-    if (!currentPrice) {
-      match = responseText.match(pricePatterns[4]);
-      if (match) {
-        currentPrice = parseFloat(match[1]);
-        console.log(`[Price] Jina matched current price: ${currentPrice}`);
-      }
-    }
-
-    // 最后尝试元/克格式
-    if (!currentPrice) {
-      match = responseText.match(pricePatterns[5]);
-      if (match) {
-        currentPrice = parseFloat(match[1]);
-        console.log(`[Price] Jina matched yuan/g price: ${currentPrice}`);
-      }
-    }
-
+    // 校验价格有效性
     if (!currentPrice || isNaN(currentPrice) || currentPrice <= 0) {
       console.log(`[Price] Jina: No valid price found`);
       return null;
@@ -182,7 +124,7 @@ function parseJinaResponse(responseText: string, source: typeof PRICE_SOURCES[0]
       change,
       changePercent: changePercent || 0,
       source: 'jd_jina',
-      name: '京东金融 - 黄金 9999',
+      name: '京东金融 - 浙商实时金价',
     };
   } catch (error) {
     console.error(`[Price] Jina parse error:`, error);
