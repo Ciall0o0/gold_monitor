@@ -47,7 +47,7 @@ export function loadConfig(env: Env): Config {
 
     // Data Sources
     priceApiUrl: env.PRICE_API_URL || 'https://hq.sinajs.cn/list=hf_AU0',
-    newsApiUrl: env.NEWS_API_URL || 'https://www.cls.cn/searchPage?keyword=黄金',
+    newsApiUrl: env.NEWS_API_URL || "https://orz.ai/api/v1/dailynews/?platform=cls",
   };
 }
 

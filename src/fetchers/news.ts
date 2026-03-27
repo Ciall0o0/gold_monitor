@@ -2,7 +2,7 @@
  * 黄金相关新闻获取模块
  * 从财联社等获取黄金相关新闻
  */
-
+import type { Config } from '../utils/config';
 export interface NewsItem {
   title: string;
   summary: string;
@@ -18,25 +18,26 @@ export interface NewsData {
 
 /**
  * 获取黄金相关新闻
- * 由于大部分新闻API需要认证，这里使用简单的抓取方式
  */
-export async function fetchGoldNews(): Promise<NewsData> {
+export async function fetchGoldNews(config: Config): Promise<NewsData> {
   try {
     // 财联社黄金板块
-    const response = await fetch('https://www.cls.cn/searchPage?keyword=黄金', {
+
+    const response = await fetch(config.newsApiUrl, {
+      method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       }
     });
 
     if (!response.ok) {
       // 如果抓取失败，返回模拟数据
-      return getMockNewsData();
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    // 由于页面是动态渲染的，直接返回模拟数据
-    // 在实际部署时，可以接入真实的新闻API
-    return getMockNewsData();
+    return response.json();
   } catch (error) {
     console.error('获取新闻失败:', error);
     return getMockNewsData();

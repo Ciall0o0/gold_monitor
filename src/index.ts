@@ -96,6 +96,16 @@ export default {
       });
     }
 
+    // 获取新闻数据
+    if (path === '/news') {
+      const config = loadConfig(env);
+      const errors = validateConfig(config);
+      const newsData = await fetchGoldNews(config);
+      return new Response(JSON.stringify(newsData, null, 2), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // 获取价格历史
     if (path === '/history') {
       const history = await getPriceHistory(env.PRICE_HISTORY);
@@ -198,7 +208,7 @@ async function processGoldMonitoring(env: Env): Promise<void> {
 
   // 6. 获取新闻数据
   console.log('获取市场新闻...');
-  const newsData = await fetchGoldNews();
+  const newsData = await fetchGoldNews(config);
 
   // 7. AI分析
   console.log('进行AI分析...');
@@ -275,6 +285,9 @@ GET /price
 
 GET /history
   获取价格历史数据
+
+GET /news
+  获取最新的黄金相关新闻
 
 POST /monitor
   手动触发监测任务

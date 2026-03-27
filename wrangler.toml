@@ -21,7 +21,7 @@ AI_CONFIDENCE_THRESHOLD = "70"
 PRICE_API_URL = "https://hq.sinajs.cn/list=hf_AU0"
 
 # News Data Source
-NEWS_API_URL = "https://www.cls.cn/searchPage?keyword=黄金"
+NEWS_API_URL = "https://orz.ai/api/v1/dailynews/?platform=cls"
 
 # KV Namespace for caching price history
 [[kv_namespaces]]
