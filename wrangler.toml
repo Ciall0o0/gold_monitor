@@ -1,0 +1,33 @@
+name = "gold-monitor"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# Cron trigger - every 15 minutes during trading hours
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Environment variables (set via wrangler secret or dashboard)
+[vars]
+# SiliconFlow Configuration
+SILICONFLOW_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+SILICONFLOW_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Alert Thresholds
+MA_WINDOW = "5"
+PRICE_DEVIATION_THRESHOLD = "0.05"
+AI_CONFIDENCE_THRESHOLD = "70"
+
+# Price Data Sources
+PRICE_API_URL = "https://hq.sinajs.cn/list=hf_AU0"
+
+# News Data Source
+NEWS_API_URL = "https://www.cls.cn/searchPage?keyword=黄金"
+
+# KV Namespace for caching price history
+[[kv_namespaces]]
+binding = "PRICE_HISTORY"
+id = "8a0b17db368a44a6977a96418da47f70"
+
+# Secrets (use `wrangler secret put` to set these):
+# - SILICONFLOW_API_KEY
+# - SERVERCHAN_SENDKEY
