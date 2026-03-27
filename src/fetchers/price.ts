@@ -2,7 +2,7 @@
  * 黄金价格数据获取模块
  * 多源获取确保可靠性
  */
-
+import type { Config } from '../utils/config';
 export interface PriceData {
   current: number;
   open: number;
@@ -21,10 +21,8 @@ const PRICE_SOURCES = [
   { name: '浙商银行积存金 (Jina)', url: 'https://r.jina.ai/https://jdjr.jd.com/?oldVersion=true&tab=gold', type: 'jd_jina', code: 'ZSBANK' },
 ];
 
-// Jina API Key
-const JINA_API_KEY = 'jina_3b33c4f8b02c4397b0594f817118ac03MbNwjVCp8h8ZVoQb6dHo2ZENPi3f';
 
-export async function fetchGoldPrice(): Promise<PriceData | null> {
+export async function fetchGoldPrice(config: Config): Promise<PriceData | null> {
   for (const source of PRICE_SOURCES) {
     try {
       console.log(`[Price] Trying ${source.name}...`);
@@ -34,7 +32,7 @@ export async function fetchGoldPrice(): Promise<PriceData | null> {
           'Referer': 'jd_jina',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           'Accept': source.type === 'jd_jina' ? 'text/plain' : '*/*',
-          'Authorization': `Bearer ${JINA_API_KEY}`,
+          'Authorization': `Bearer ${config.jinaApiKey}`,
           'X-Return-Format': 'text',
         },
         cf: { cacheTtl: 0 },

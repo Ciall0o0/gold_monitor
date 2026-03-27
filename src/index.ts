@@ -16,6 +16,7 @@ export interface Env {
   // Secrets
   SILICONFLOW_API_KEY: string;
   SERVERCHAN_SENDKEY: string;
+  JINA_API_KEY: string;
 
   // Variables
   SILICONFLOW_MODEL?: string;
@@ -87,7 +88,9 @@ export default {
 
     // 获取当前价格
     if (path === '/price') {
-      const priceData = await fetchGoldPrice();
+      const config = loadConfig(env);
+      const errors = validateConfig(config);
+      const priceData = await fetchGoldPrice(config);
       return new Response(JSON.stringify(priceData, null, 2), {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -172,7 +175,7 @@ async function processGoldMonitoring(env: Env): Promise<void> {
 
   // 2. 获取当前价格
   console.log('获取黄金价格...');
-  const priceData = await fetchGoldPrice();
+  const priceData = await fetchGoldPrice(config);
 
   if (!priceData) {
     throw new Error('获取价格数据失败');

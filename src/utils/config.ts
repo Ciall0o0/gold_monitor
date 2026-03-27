@@ -11,6 +11,8 @@ export interface Config {
 
   // Server酱
   serverChanSendKey: string;
+  // Jina
+  jinaApiKey: string;
 
   // Thresholds
   maWindow: number;
@@ -21,7 +23,7 @@ export interface Config {
   priceApiUrl: string;
   newsApiUrl: string;
 }
-
+import { Env } from "../index";
 /**
  * 从环境变量加载配置
  */
@@ -34,6 +36,9 @@ export function loadConfig(env: Env): Config {
 
     // Server酱
     serverChanSendKey: env.SERVERCHAN_SENDKEY || '',
+
+    //Jina
+    jinaApiKey: env.JINA_API_KEY || '',
 
     // Thresholds
     maWindow: parseInt(env.MA_WINDOW || '5', 10),
