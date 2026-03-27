@@ -31,3 +31,9 @@ id = "8a0b17db368a44a6977a96418da47f70"
 # Secrets (use `wrangler secret put` to set these):
 # - SILICONFLOW_API_KEY
 # - SERVERCHAN_SENDKEY
+# - JINA_API_KEY
+
+[observability]
+[observability.logs]
+enabled = true
+invocation_logs = true
