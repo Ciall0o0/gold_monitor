@@ -91,7 +91,7 @@ export async function sendDailySummary(
 - 偏离MA10: ${(indicators.deviationFromMA10 * 100).toFixed(2)}%
 
 ---
-*发送时间: ${new Date(Date.now() + 8 * 60 * 60 * 1000).toLocaleString('zh',{timeZone: 'Asia/Shanghai', hour12:true})}*
+*发送时间: ${new Date(Date.now()).toLocaleString('zh',{timeZone: 'Asia/Shanghai', hour12:true})}*
 `;
 
     const url = `https://sctapi.ftqq.com/${config.serverChanSendKey}.send`;
@@ -186,7 +186,7 @@ function buildAlertMessage(context: AlertContext): string {
 - 分析理由: ${aiResult.reasoning}\n`;
   }
 
-  message += `\n---\n*发送时间: ${new Date(Date.now() + 8 * 60 * 60 * 1000).toLocaleString('zh',{timeZone: 'Asia/Shanghai', hour12:true})}*\n*数据仅供参考，投资有风险*\n`;
+  message += `\n---\n*发送时间: ${new Date(Date.now()).toLocaleString('zh',{timeZone: 'Asia/Shanghai', hour12:true})}*\n*数据仅供参考，投资有风险*\n`;
 
   return message;
 }
