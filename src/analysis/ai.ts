@@ -1,12 +1,11 @@
 /**
  * AI分析模块
- * 调用SiliconFlow API进行黄金价格走势分析
+ * 调用OPENROUTER API进行黄金价格走势分析
  */
 
 import type { Config } from '../utils/config';
 import type { PriceData } from '../fetchers/price';
 import type { TechnicalIndicators } from './technical';
-import type { NewsData } from '../fetchers/news';
 
 export interface AIAnalysisResult {
   trend: 'up' | 'down' | 'neutral';
@@ -17,25 +16,24 @@ export interface AIAnalysisResult {
 }
 
 /**
- * 调用SiliconFlow API进行黄金走势分析
+ * 调用OPENROUTER API进行黄金走势分析
  */
 export async function analyzeWithAI(
   config: Config,
   priceData: PriceData,
   indicators: TechnicalIndicators,
-  newsData: NewsData
 ): Promise<AIAnalysisResult | null> {
   try {
-    const prompt = buildAnalysisPrompt(priceData, indicators, newsData);
+    const prompt = buildAnalysisPrompt(priceData, indicators);
 
-    const response = await fetch(config.siliconFlowApiUrl, {
+    const response = await fetch(config.OPENROUTERApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.siliconFlowApiKey}`
+        'Authorization': `Bearer ${config.OPENROUTERApiKey}`
       },
       body: JSON.stringify({
-        model: config.siliconFlowModel,
+        model: config.OPENROUTERModel,
         messages: [
           {
             role: 'system',
@@ -98,7 +96,6 @@ export async function analyzeWithAI(
 function buildAnalysisPrompt(
   priceData: PriceData,
   indicators: TechnicalIndicators,
-  newsData: NewsData
 ): string {
   return `请分析黄金价格走势：
 
@@ -115,8 +112,6 @@ function buildAnalysisPrompt(
 - RSI(14): ${indicators.rsi14.toFixed(2)}
 - 趋势判断: ${indicators.trend === 'up' ? '上涨' : indicators.trend === 'down' ? '下跌' : '横盘'}
 
-【市场动态】
-${newsData.items.slice(0, 3).map(n => `- ${n.title}: ${n.summary}`).join('\n')}
 
 请分析未来1-3天的价格走势，输出JSON格式结果。`;
 }

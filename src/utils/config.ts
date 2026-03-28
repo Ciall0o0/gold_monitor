@@ -4,10 +4,10 @@
  */
 
 export interface Config {
-  // SiliconFlow API
-  siliconFlowApiKey: string;
-  siliconFlowModel: string;
-  siliconFlowApiUrl: string;
+  // OPENROUTER API
+  OPENROUTERApiKey: string;
+  OPENROUTERModel: string;
+  OPENROUTERApiUrl: string;
 
   // Server酱
   serverChanSendKey: string;
@@ -19,9 +19,6 @@ export interface Config {
   priceDeviationThreshold: number;
   aiConfidenceThreshold: number;
 
-  // Data Sources
-  priceApiUrl: string;
-  newsApiUrl: string;
 }
 import { Env } from "../index";
 /**
@@ -29,10 +26,10 @@ import { Env } from "../index";
  */
 export function loadConfig(env: Env): Config {
   return {
-    // SiliconFlow
-    siliconFlowApiKey: env.SILICONFLOW_API_KEY || '',
-    siliconFlowModel: env.SILICONFLOW_MODEL || 'deepseek-ai/DeepSeek-V2.5',
-    siliconFlowApiUrl: env.SILICONFLOW_API_URL || 'https://api.siliconflow.cn/v1/chat/completions',
+    // OPENROUTER
+    OPENROUTERApiKey: env.OPENROUTER_API_KEY || '',
+    OPENROUTERModel: env.OPENROUTER_MODEL || 'deepseek-ai/DeepSeek-V2.5',
+    OPENROUTERApiUrl: env.OPENROUTER_API_URL || 'https://api.OPENROUTER.cn/v1/chat/completions',
 
     // Server酱
     serverChanSendKey: env.SERVERCHAN_SENDKEY || '',
@@ -45,9 +42,6 @@ export function loadConfig(env: Env): Config {
     priceDeviationThreshold: parseFloat(env.PRICE_DEVIATION_THRESHOLD || '0.05'),
     aiConfidenceThreshold: parseInt(env.AI_CONFIDENCE_THRESHOLD || '70', 10),
 
-    // Data Sources
-    priceApiUrl: env.PRICE_API_URL || 'https://hq.sinajs.cn/list=hf_AU0',
-    newsApiUrl: env.NEWS_API_URL || "https://orz.ai/api/v1/dailynews/?platform=cls",
   };
 }
 
@@ -57,8 +51,8 @@ export function loadConfig(env: Env): Config {
 export function validateConfig(config: Config): string[] {
   const errors: string[] = [];
 
-  if (!config.siliconFlowApiKey) {
-    errors.push('缺少 SILICONFLOW_API_KEY');
+  if (!config.OPENROUTERApiKey) {
+    errors.push('缺少 OPENROUTER_API_KEY');
   }
 
   if (!config.serverChanSendKey) {

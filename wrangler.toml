@@ -8,9 +8,9 @@ crons = ["*/15 * * * *"]
 
 # Environment variables (set via wrangler secret or dashboard)
 [vars]
-# SiliconFlow Configuration
-SILICONFLOW_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
-SILICONFLOW_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+# OPENROUTER Configuration
+OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # Alert Thresholds
 MA_WINDOW = "5"
@@ -29,7 +29,7 @@ binding = "PRICE_HISTORY"
 id = "8a0b17db368a44a6977a96418da47f70"
 
 # Secrets (use `wrangler secret put` to set these):
-# - SILICONFLOW_API_KEY
+# - OPENROUTER_API_KEY
 # - SERVERCHAN_SENDKEY
 # - JINA_API_KEY
 

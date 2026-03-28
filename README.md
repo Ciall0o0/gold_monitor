@@ -1,12 +1,12 @@
 # 黄金监测与AI预警系统
 
-基于 Cloudflare Workers 的上海黄金交易所 AU9999 价格监测服务，集成 SiliconFlow AI 分析和 Server酱 推送。
+基于 Cloudflare Workers 的上海黄金交易所 AU9999 价格监测服务，集成 OPENROUTER AI 分析和 Server酱 推送。
 
 ## 功能特性
 
 - 📊 每15分钟自动监测黄金价格
 - 📈 技术指标计算（MA5/MA10/MA20、RSI、趋势判断）
-- 🤖 SiliconFlow AI 智能分析涨跌概率
+- 🤖 OPENROUTER AI 智能分析涨跌概率
 - 🚨 双重预警机制（价格偏离+AI预测）
 - 📱 Server酱微信推送
 - 💾 Cloudflare KV 价格历史存储
@@ -39,8 +39,8 @@ npx wrangler kv:namespace create "PRICE_HISTORY"
 ### 3. 配置 Secrets
 
 ```bash
-# 设置 SiliconFlow API Key
-npx wrangler secret put SILICONFLOW_API_KEY
+# 设置 OPENROUTER API Key
+npx wrangler secret put OPENROUTER_API_KEY
 
 # 设置 Server酱 SendKey
 npx wrangler secret put SERVERCHAN_SENDKEY
@@ -74,7 +74,7 @@ npm run deploy
 | 项目 | 费用 |
 |------|------|
 | Cloudflare Workers | 免费 (10万次/天) |
-| SiliconFlow API | ~¥1-5/月 |
+| OPENROUTER API | ~¥1-5/月 |
 | Server酱 | 免费 |
 
 ## 技术栈
@@ -82,7 +82,7 @@ npm run deploy
 - TypeScript
 - Cloudflare Workers
 - Cloudflare KV
-- SiliconFlow API
+- OPENROUTER API
 - Server酱
 
 ## License

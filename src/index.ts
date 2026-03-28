@@ -6,7 +6,6 @@
 import { loadConfig, validateConfig } from './utils/config';
 import { getPriceHistory, addPriceToHistory } from './utils/cache';
 import { fetchGoldPrice } from './fetchers/price';
-import { fetchGoldNews } from './fetchers/news';
 import { calculateIndicators, checkPriceDeviationAlert } from './analysis/technical';
 import { analyzeWithAI } from './analysis/ai';
 import { sendAlert, sendDailySummary } from './alerts/notifier';
@@ -14,13 +13,13 @@ import { sendAlert, sendDailySummary } from './alerts/notifier';
 // Cloudflare Workers 环境变量类型定义
 export interface Env {
   // Secrets
-  SILICONFLOW_API_KEY: string;
+  OPENROUTER_API_KEY: string;
   SERVERCHAN_SENDKEY: string;
   JINA_API_KEY: string;
 
   // Variables
-  SILICONFLOW_MODEL?: string;
-  SILICONFLOW_API_URL?: string;
+  OPENROUTER_MODEL?: string;
+  OPENROUTER_API_URL?: string;
   MA_WINDOW?: string;
   PRICE_DEVIATION_THRESHOLD?: string;
   AI_CONFIDENCE_THRESHOLD?: string;
@@ -96,15 +95,6 @@ export default {
       });
     }
 
-    // 获取新闻数据
-    if (path === '/news') {
-      const config = loadConfig(env);
-      const errors = validateConfig(config);
-      const newsData = await fetchGoldNews(config);
-      return new Response(JSON.stringify(newsData, null, 2), {
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
 
     // 获取价格历史
     if (path === '/history') {
@@ -206,13 +196,10 @@ async function processGoldMonitoring(env: Env): Promise<void> {
 
   console.log(`MA5: ${indicators.ma5.toFixed(2)}, 偏离度: ${(indicators.deviationFromMA5 * 100).toFixed(2)}%`);
 
-  // 6. 获取新闻数据
-  console.log('获取市场新闻...');
-  const newsData = await fetchGoldNews(config);
 
   // 7. AI分析
   console.log('进行AI分析...');
-  const aiResult = await analyzeWithAI(config, priceData, indicators, newsData);
+  const aiResult = await analyzeWithAI(config, priceData, indicators);
 
   if (aiResult) {
     console.log(`AI分析结果: ${aiResult.trend}, 置信度: ${aiResult.confidence}%, 应预警: ${aiResult.shouldAlert}`);
@@ -286,8 +273,6 @@ GET /price
 GET /history
   获取价格历史数据
 
-GET /news
-  获取最新的黄金相关新闻
 
 POST /monitor
   手动触发监测任务
