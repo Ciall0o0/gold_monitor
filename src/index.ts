@@ -10,6 +10,18 @@ import { calculateIndicators, checkPriceDeviationAlert } from './analysis/techni
 import { analyzeWithAI } from './analysis/ai';
 import { sendAlert, sendDailySummary } from './alerts/notifier';
 
+/**
+ * 检查是否为交易日（周一至周五）
+ * @returns true 如果是交易日，false 如果是非交易日
+ */
+function isTradingDay(): boolean {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0=周日, 1=周一, ..., 6=周六
+
+  // 周一到周五是交易日（1-5），周末（0,6）非交易日
+  return dayOfWeek >= 1 && dayOfWeek <= 5;
+}
+
 // Cloudflare Workers 环境变量类型定义
 export interface Env {
   // Secrets
@@ -37,6 +49,12 @@ export default {
   // Cron触发器处理
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     console.log('Cron任务开始执行:', new Date().toISOString());
+
+    // 检查是否为交易日
+    if (!isTradingDay()) {
+      console.log('非交易日，跳过执行');
+      return;
+    }
 
     try {
       await processGoldMonitoring(env);
@@ -259,7 +277,7 @@ function getApiDocs(): string {
 黄金监测服务 API
 ================
 
-定时任务: 每15分钟自动执行一次监测
+定时任务: 每15分钟自动执行一次监测（仅在交易日周一至周五执行）
 
 手动接口:
 ---------
