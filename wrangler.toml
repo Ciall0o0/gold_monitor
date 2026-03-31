@@ -4,7 +4,7 @@ compatibility_date = "2026-01-01"
 
 # Cron trigger - every 15 minutes during trading hours
 [triggers]
-crons = ["*/15 * * mon-fri"]
+crons = ["*/15 * * * mon-fri"]
 
 # Environment variables (set via wrangler secret or dashboard)
 [vars]
